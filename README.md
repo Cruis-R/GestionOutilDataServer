@@ -20,7 +20,10 @@ systemctl status mysql.service
 
 Import SQL file  
 ```
-mysql -u <user name> -p<password> <database name> < sqlfilename.sql  
+$ mysql
+mysql > create database <database name>
+mysql > exit
+$ sudo mysql -u <user name> -p<password> <database name> < sqlfilename.sql  
 ```
 
 install phpMyAdmin  
