@@ -69,7 +69,7 @@ app.put('/utilisateurs',jsonParser, function (req, res) {
   let data = req.body;
   console.log("data",data);
   let queryString = 'UPDATE `users` SET `nom` = ? ,`prenom` = ? , `societe` = ? ,`username` = ? ,`password` = ? ,`email` = ? , `tel` = ? , `profil` = ?  WHERE `users`.`id_user` = ?';
-  let inserts = [data["nom"],data["prenom"],data["societe"],data["username"],data["password"],data["email"],data["tel"],data["profil"],data["id_user"]];
+  let inserts = [data["nom"],data["prenom"],data["societe"],data["username"],data["motdepasse"],data["email"],data["tel"],data["profil"],data["id_user"]];
   queryString = mysqlFunction.format(queryString, inserts);
   console.log("queryString",queryString);
   queryDB(res,queryString);
@@ -112,12 +112,87 @@ app.post('/profils', jsonParser, function(req,res){
 app.get('/clients', function (req, res) {
   queryDB(res,'SELECT * FROM `clients`');
 })
+//batteries
 app.get('/batteries', function (req, res) {
   queryDB(res,'SELECT * FROM `batteries`');
 })
+app.post('/batteries', jsonParser, function (req, res) {
+  let data = req.body;
+  let queryString = 'INSERT INTO `batteries` (`id_batterie`, `date_production`, `date_achat`, `poids`, `puissance`, `bms`, `identifiant_bms`, `identifiant`, `cellule`, `nb_cycles`, `statut`, `date_ajout`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
+  let inserts = [null, data["date_production"],data["date_achat"], data["poids"], data["puissance"],data["bms"], data["identifiant_bms"], data["identifiant"], data["cellule"], data["nb_cycles"], data["statut"], data["date_ajout"]];
+  queryString = mysqlFunction.format(queryString,inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/batteries', jsonParser, function (req, res) {
+  let data = req.body;
+  let queryString = 'UPDATE `batteries` SET `date_production` = ?, `date_achat` = ?, `poids` = ?, `puissance` = ?, `bms` = ?, `identifiant_bms` = ?, `identifiant` = ?, `cellule` = ?, `nb_cycles` = ?, `statut` = ?, `date_ajout` = ? WHERE `batteries`.`id_batterie` = ?;';
+  let inserts = [data["date_production"],data["date_achat"], data["poids"], data["puissance"],data["bms"], data["identifiant_bms"], data["identifiant"], data["cellule"], data["nb_cycles"], data["statut"], data["date_ajout"], data['id_batterie']];
+  queryString = mysqlFunction.format(queryString,inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/batteries/client', jsonParser, function (req, res) {
+  let data = req.body;
+  console.log("data",data);
+  let client = data['clientModalType']===1?data['id_client']:null;
+  let queryString = 'UPDATE `batteries` SET `id_client` = ? WHERE `batteries`.`id_batterie` = ?';
+  let inserts = [client,data["id_batterie"]];
+  queryString = mysqlFunction.format(queryString, inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/batteries/statut', jsonParser, function (req, res) {
+  let data = req.body;
+  console.log("data",data);
+  let queryString = 'UPDATE `batteries` SET `statut` = ? WHERE `batteries`.`id_batterie` = ?';
+  let inserts = [data['statut'],data["id_batterie"]];
+  queryString = mysqlFunction.format(queryString, inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+//chargeurs
 app.get('/chargeurs', function (req, res) {
   queryDB(res,'SELECT * FROM `chargeurs`');
 })
+//add new chargeur
+app.post('/chargeurs', jsonParser, function (req, res) {
+  let data = req.body;
+  let queryString = 'INSERT INTO `chargeurs` (`id_chargeur`, `id_client`, `identifiant`, `statut`, `date_production`, `date_acquisition`, `date_ajout`) VALUES (?, ?, ?, ?, ?, ?, ?);';
+  let inserts = [null, null, data["identifiant"], data["statut"], data["date_production"],data["date_acquisition"], data["date_ajout"]];
+  queryString = mysqlFunction.format(queryString,inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+//modifier  chargeur
+app.put('/chargeurs', jsonParser, function (req, res) {
+  let data = req.body;
+  let queryString = 'UPDATE `chargeurs` SET `identifiant` = ?, `statut` = ?, `date_production` = ?, `date_acquisition` = ?, `date_ajout`  = ? WHERE `chargeurs`.`id_chargeur` = ?;';
+  let inserts = [data["identifiant"],data["statut"], data["date_production"], data["date_acquisition"],data["date_ajout"], data["id_chargeur"]];
+  queryString = mysqlFunction.format(queryString,inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/chargeurs/client', jsonParser, function (req, res) {
+  let data = req.body;
+  console.log("data",data);
+  let client = data['clientModalType']===1?data['id_client']:null;
+  let queryString = 'UPDATE `chargeurs` SET `id_client` = ? WHERE `chargeurs`.`id_chargeur` = ?';
+  let inserts = [client,data["id_chargeur"]];
+  queryString = mysqlFunction.format(queryString, inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/chargeurs/statut', jsonParser, function (req, res) {
+  let data = req.body;
+  console.log("data",data);
+  let queryString = 'UPDATE `chargeurs` SET `statut` = ? WHERE `chargeurs`.`id_chargeur` = ?';
+  let inserts = [data['statut'],data["id_chargeur"]];
+  queryString = mysqlFunction.format(queryString, inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+
 //Scooters
 app.get('/scooters', function (req, res) {
   queryDB(res,'SELECT * FROM `scooters`');
@@ -136,18 +211,40 @@ app.post('/scooters',jsonParser, function (req, res) {
   console.log("queryString",queryString);
   queryDB(res,queryString);
 })
-app.post('/scooters/boitier',jsonParser, function (req, res) {
+app.put('/scooters',jsonParser, function (req, res) {
   let data = req.body;
+  let timeString = new Date().toJSON().split('T')[0];
   console.log("data",data);
-  let boiter = data['boitierModalType']===1?data['id_boitier']:null;
-  let actif = data['boitierModalType']===1?1:0;
-  let queryString = 'UPDATE `scooters` SET `id_boitier` = ?, `actif` = ? WHERE `scooters`.`id_scooter` = ?';
-  let inserts = [boiter,actif,data["id_scooter"]];
-  queryString = mysqlFunction.format(queryString, inserts);
+  let queryString = 'UPDATE `scooters` SET `num_cruisrent` = ? , `marque` = ?, `modele` = ?, `immat` = ?, `date_immat` = ?, `type_usage` = ?, `composants` = ?, `num_chassis` = ?, `nb_kms` = ?, `controle_qualite` = ?, `num_contratassurance` = ?, `assureur` = ?, `debut_assurance` = ?, `duree_assurance` = ?, `statut` = ? WHERE `scooters`.`id_scooter` = ?';
+  let inserts =[data["num_cruisrent"],data["marque"],data["modele"],
+    data["immat"],data["date_immat"],data["type_usage"],data["composants"],data["num_chassis"],
+    data["nb_kms"],data["controle_qualite"],data["num_contratassurance"],data["assureur"],
+    data["debut_assurance"],data["duree_assurance"],data["statut"],data['id_scooter']];
+  queryString = mysqlFunction.format(queryString,inserts);
   console.log("queryString",queryString);
   queryDB(res,queryString);
 })
-app.post('/scooters/contrat',jsonParser, function (req, res) {
+app.put('/scooters/boitier',jsonParser, function (req, res) {
+  let data = req.body;
+  console.log("data",data);
+  let queryString1, queryString2, inserts1, inserts2;
+  if (data['boitierModalType']===1) {
+    queryString1 = 'UPDATE `scooters` SET `id_boitier` = ?, `actif` = ? WHERE `scooters`.`id_scooter` = ?;';
+    inserts1 = [data['id_boitier'],1,data["id_scooter"]];
+    let date_mis_en_place = new Date().toJSON().split('T')[0];
+    queryString2 = 'UPDATE `boitiers` SET `id_scooter` = ?, `date_mis_en_place` = ? WHERE `boitiers`.`id_boitier` = ?;';
+    inserts2 = [data["id_scooter"],date_mis_en_place, data['id_boitier']];
+  }else {
+    queryString1 = 'UPDATE `scooters` SET `id_boitier` = ?, `actif` = ? WHERE `scooters`.`id_scooter` = ?;';
+    inserts1 = [null,0,data["id_scooter"]];
+    queryString2 = 'UPDATE `boitiers` SET `id_scooter` = ? WHERE `boitiers`.`id_boitier` = ?;';
+    inserts2 = [null, data['id_boitier']];
+  }
+  queryString = mysqlFunction.format(queryString1,inserts1).concat(mysqlFunction.format(queryString2,inserts2));
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/scooters/contrat',jsonParser, function (req, res) {
   let data = req.body;
   console.log("data",data);
   let queryString;
@@ -171,14 +268,64 @@ app.post('/scooters/contrat',jsonParser, function (req, res) {
   queryDB(res,queryString);
 })
 
-//
+//statuts
 app.get('/statuts', function (req, res) {
   queryDB(res,'SELECT * FROM `statuts`');
 })
+//statuts_cles
+app.get('/statuts_cles', function (req, res) {
+  queryDB(res,'SELECT * FROM `statuts_cles`');
+})
+//auth
 app.get('/users', function (req, res) {
   queryDB(res,'SELECT * FROM `users`');
 })
-
+//Boitier
+//get boitiers
+app.get('/boitiers', function (req, res) {
+  queryDB(res,'SELECT * FROM `boitiers`');
+})
+//add new boitier
+app.post('/boitiers', jsonParser, function (req, res) {
+  let data = req.body;
+  let queryString = 'INSERT INTO `boitiers` (`id_boitier`, `date_acquisition`, `date_reception`, `identifiant`, `date_mis_en_place`, `num_tel`, `code_puk`, `imei`, `password`, `code_pin`, `forfait`, `date_activation`, `statut`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
+  let inserts = [null, data["date_acquisition"], data["date_reception"], data["identifiant"], null, data["num_tel"], data["code_puk"], data["imei"], data["password"],data["code_pin"], data["forfait"],data["date_activation"], data["statut"]];
+  queryString = mysqlFunction.format(queryString,inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/boitiers', jsonParser, function (req, res) {
+  let data = req.body;
+  let queryString = 'UPDATE `boitiers` SET `date_acquisition` = ?, `date_reception` = ?, `identifiant` = ?, `num_tel` = ?, `code_puk` = ?, `imei` = ?, `password` = ?, `code_pin` = ?, `forfait` = ?, `date_activation` = ?, `statut` = ? WHERE `boitiers`.`id_boitier` = ?;';
+  let inserts = [data["date_acquisition"], data["date_reception"], data["identifiant"],data["num_tel"], data["code_puk"], data["imei"], data["password"],data["code_pin"], data["forfait"],data["date_activation"], data["statut"], data['id_boitier']];
+  queryString = mysqlFunction.format(queryString,inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/boitiers/scooter', jsonParser, function (req, res) {
+  let data = req.body;
+  console.log("data",data);
+  let queryString1;
+  let queryString2;
+  let inserts1;
+  let inserts2;
+  if(data['scooterModalType']===1){
+    let date_mis_en_place = new Date().toJSON().split('T')[0];
+    queryString1 = 'UPDATE `boitiers` SET `id_scooter` = ?, `date_mis_en_place` = ? WHERE `boitiers`.`id_boitier` = ?;'
+    queryString2 = 'UPDATE `scooters` SET `id_boitier` = ? WHERE `scooters`.`id_scooter` = ?;';
+    inserts1 = [data["id_scooter"], date_mis_en_place, data['id_boitier']];
+    inserts2 = [data['id_boitier'], data["id_scooter"]];
+  }else {
+    queryString1 = 'UPDATE `boitiers` SET `id_scooter` = ? WHERE `boitiers`.`id_boitier` = ?;';
+    queryString2 = 'UPDATE `scooters` SET `id_boitier` = ? WHERE `scooters`.`id_scooter` = ?;';
+    inserts1 = [null, data['id_boitier']];
+    inserts2 = [null, data["id_scooter"]];
+  }
+  queryString = mysqlFunction.format(queryString1,inserts1).concat(mysqlFunction.format(queryString2,inserts2));
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+//test
 app.get('/contrats/name=:name&&id=:id', function (req, res) {
   console.log("get contrats by name",req.params);
   res.end();
