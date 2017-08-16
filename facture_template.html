@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="css/style2.css" rel="stylesheet">
+</head>
+<body>
+  <table>
+    <tr>
+      <td style='width:300px;'><br>
+        <img src='img/logo.jpg'><br>
+        67 avenue Denfert Rochereau<br>
+        75014 Paris<br>
+        France<br><br>
+        +33 9 55 54 4000<br>
+        compta@cruisrent.com<br>
+        www.cuisrent.com
+      </td>
+      <td style='width:700px; text-align: right;'>
+        <div style='margin-top: -30px; margin-left: 500px; text-align:justify;'>
+          <h2>FACTURE</h2>
+          ".$nomcli."
+        </div>
+      </td>
+    </tr>
+  </table>
+  <br><br>
+  <table style='margin-left: 330px;'>
+    <tr>
+      <td style='width:120px;'>N° FACTURE<br>".$tab['num_facture']."</td>
+      <td style='width:100px;'>N° CLIENT<br>".$tab['id_client']."</td>
+      <td style='width:120px;'>DATE FACTURE<br>".$datefact."</td>
+    </tr>
+  </table>
+  <br><br>
+  <table style='margin-left: 120px;'>
+    <tr>
+      <td style='width:220px;'>DESIGNATION</td>
+      <td style='width:90px;'>QUANTITE</td>
+      <td style='width:130px;'>PRIX UNITAIRE HT</td>
+      <td style='width:130px;'>PRIX UNITAIRE TTC</td>
+      <td style='width:100px;'>MONTANT TTC</td>
+      <td style='width:90px;'>TVA</td>
+    </tr>
+    <tr>
+      <td>".$tab['designation']."</td>
+      <td>1</td>
+      <td>".$tab['totalht']."</td>
+      <td>".$tab['totalttc']."</td>
+      <td>".$tab['totalttc']."</td>
+      <td>".$tab['tva']."</td>
+    </tr>
+  </table>
+  <br><br>
+  <div style='margin-left: 670px; border: 2px #000 solid; width:200px; padding: 10px;'>
+    <table>
+    <tr>
+      <td width='90px;'>BRUT TTC &nbsp;</td><td style='width: 80px; text-align:right;'>".$tab['totalttc']." €</td>
+    </tr>
+    <tr>
+      <td>NET HT &nbsp;</td><td style='text-align:right;'>".$tab['totalht']." €</td>
+    </tr>
+    <tr>
+      <td>TOTAL TVA &nbsp;</td><td style='text-align:right;'>".$tab['tva']." €</td>
+    </tr>
+    <tr>
+      <td>NET TTC &nbsp;</td><td style='text-align:right;'>".$tab['totalttc']." €</td>
+    </tr>
+    </table>
+  </div>
+  <br><br>
+  CRUIS RENT SASU au capital de 30.000 euros - SIRET : 81263416000020<br>
+  CODE APE : 77.11B Location de longue durée de voitures et de véhiculers automobiles légers<br>
+  TVA INTRACOMMUNAUTAIRE : FR37 812634160<br>
+  IBAN CIC PONTOISE : FR7630066104610002035830179 - Swift : CMCIFRPP<br>
+
+</body>
+</html>

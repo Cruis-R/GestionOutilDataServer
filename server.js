@@ -21,6 +21,7 @@ var getConnection = function(){
 }
 var queryDB = function(res,queryString){
   var connection = getConnection();
+  var connectinHandler;
   connection.then((conn) => conn.query(queryString))
   .then(([rows, fields]) => {
     console.log("return query data");
@@ -30,6 +31,7 @@ var queryDB = function(res,queryString){
     console.log(err);
     res.sendStatus(400);
   });
+  connection.then((conn) => conn.end());
 };
 app.use(cors(corsOptions));
 
@@ -285,6 +287,9 @@ app.get('/users', function (req, res) {
 app.get('/boitiers', function (req, res) {
   queryDB(res,'SELECT * FROM `boitiers`');
 })
+app.get('/boitiers/associer', function (req, res) {
+  queryDB(res,"SELECT `id_boitier` FROM `boitiers` WHERE `id_scooter` IS NULL OR `id_scooter` = ''");
+})
 //add new boitier
 app.post('/boitiers', jsonParser, function (req, res) {
   let data = req.body;
@@ -324,6 +329,19 @@ app.put('/boitiers/scooter', jsonParser, function (req, res) {
   queryString = mysqlFunction.format(queryString1,inserts1).concat(mysqlFunction.format(queryString2,inserts2));
   console.log("queryString",queryString);
   queryDB(res,queryString);
+})
+//Facturations
+app.get('/facturations', function (req, res) {
+  console.log("facturations",req.query);
+  if(req.query){
+    let queryString = 'SELECT * FROM `factures`, `clients` WHERE `factures`.`id_client`=`clients`.`id_client` AND `factures`.`id_facture`= ?';
+    let inserts = [req.query['id']];
+    queryString = mysqlFunction.format(queryString,inserts);
+    console.log("queryString",queryString);
+    queryDB(res,queryString);
+  }else {
+    queryDB(res,'SELECT * FROM `factures`, `clients` WHERE `factures`.`id_client`=`clients`.`id_client`');
+  }
 })
 //test
 app.get('/contrats/name=:name&&id=:id', function (req, res) {
