@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)ftp://193.25.197.153/printfact.php -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="ftp://193.25.197.153/css/style2.css" rel="stylesheet" type="text/css" media="screen">
+  <link href="ftp://193.25.197.153/css/style_imprimante.css" rel="stylesheet" type="text/css" media="print">
+  </head>
+  <body>
+<!--?php
+
+$connexion = mysql_connect("localhost", "cruisr95", "cr8507frw");
+if(!$connexion){
+ echo "marche pas";
+ exit;
+ }
+
+$db = mysql_select_db ("cruisrgestion",$connexion);
+if(!$db){
+ echo "base non trouvée";
+ exit;
+ }
+
+
+$requ="SELECT * FROM factures  WHERE id_facture =".$_GET['id'];
+$result = mysql_query ($requ,$connexion);
+while ($tab=mysql_fetch_array($result)) {
+
+
+      $reqcli="SELECT * FROM clients WHERE id_client=".$tab['id_client'];
+      $rescli = mysql_query ($reqcli,$connexion);
+       while ($cli=mysql_fetch_array($rescli)) {
+        $nomcli=$cli['societe']."<br-->".$cli['adresse']."<br>".$cli['cp']." ".$cli['ville'].")";
+       }
+
+      $datefact=substr($tab['date_facture'],8,2)."/".substr($tab['date_facture'],5,2)."/".substr($tab['date_facture'],0,4);
+      if($tab['id_contrat']=='0'){$idcontrat=' ';}else{$idcontrat=$tab['id_contrat'];}
+
+    echo "<div class="facture_header">
+              <div class="header_facture_left">
+                <img src="ftp://193.25.197.153/img/Logo_CRUIS_RENT.png">
+                <p>82 avenue DENFERT ROCHEREAU</p>
+                <p>75014 Paris</p>
+                <p>FRANCE</p>
+                <p>+33 9 55 54 4000</p>
+                <p>compta@cruisrent.com</p>
+                <p>www.cruisrent.com</p>
+              </div>
+              <div class="header_facture_right">
+                <h2>FACTURE</h2>
+                <div class="facture_suivi_par">
+                  <p>AFFAIRE SUIVIE PAR : Célia Thurel</p>
+                  <p>Email : celia.thurel@cruisrent.com</p>
+                  <p>Téléphone : 09 54 55 4000</p>
+                </div>
+                <div class="header_facture_coord_client">
+                  <p>".$nomcli."</p>
+                </div>
+              </div>
+          </div>";
+
+
+// echo "
+// <table><tbody><tr><td style="width:300px;"><br><img src="ftp://193.25.197.153/img/logo.jpg"><br>67 avenue Denfert Rochereau<br>75014 Paris<br>France<br><br>+33 9 55 54 4000<br>compta@cruisrent.com<br>www.cuisrent.com</td><td style="width:700px; text-align: right;"><div style="margin-top: -30px; margin-left: 500px; text-align:justify;"> <h2>FACTURE</h2>".$nomcli."</div></td></tr></tbody></table><br><br>";
+
+echo "<div class="facture_donnees">
+  <p>N° FACTURE<br><span>".$tab['num_facture']."</span></p>
+  <p>N° CLIENT<br><span>".$tab['id_client']."</span></p>
+  <p>OPÉRATEUR<br><span>Célia Thurel</span></p>
+  <p>DATE<br><span>".$datefact."</span></p>
+  <p>PAGE<br><span>1/1</span></p>
+</div>";
+// echo "<table style="margin-left: 330px;"><tbody><tr><td style="width:120px;">N° FACTURE<br>".$tab['num_facture']."</td><td style="width:100px;">N° CLIENT<br>".$tab['id_client']."</td><td style="width:120px;">DATE FACTURE<br>".$datefact."</td></tr></tbody></table><br><br>";
+
+// if($tab['id_contrat']=='0'){
+// echo "
+// 
+// <table style="margin-left: 120px;"><tbody><tr><td style="width:220px;">DESIGNATION</td><td style="width:90px;">QUANTITE</td><td style="width:130px;">PRIX UNITAIRE HT</td><td style="width:130px;">PRIX UNITAIRE TTC</td><td style="width:100px;">MONTANT TTC</td><td style="width:90px;">TVA</td></tr><tr><td>".$tab['designation']."</td><td>1</td><td>".$tab['totalht']."</td><td>".$tab['totalttc']."</td><td>".$tab['totalttc']."</td><td>".$tab['tva']."</td></tr></tbody></table>";
+// } else {
+// echo "
+// 
+// <table style="margin-left: 120px;"><tbody><tr><td style="width:220px;">DESIGNATION</td><td style="width:90px;">QUANTITE</td><td style="width:130px;">PRIX UNITAIRE HT</td><td style="width:130px;">PRIX UNITAIRE TTC</td><td style="width:100px;">MONTANT TTC</td><td style="width:90px;">TVA</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>";
+// }
+
+if($tab['id_contrat']=='0'){
+echo "<div class="facture_body">
+      <table>
+        <tbody><tr>
+          <th>DESIGNATION</th>
+          <th>QUANTITE</th>
+          <th>PRIX UNITAIRE HT</th>
+          <th>PRIX UNITAIRE TTC</th>
+          <th>MONTANT TTC</th>
+          <th>TVA</th>
+        </tr>
+        <tr>
+          <td>".$tab['designation']."</td>
+          <td>1</td>
+          <td>".$tab['totalht']." €</td>
+          <td>".$tab['totalttc']." €</td>
+          <td>".$tab['totalttc']." €</td>
+          <td>".$tab['tva']."</td>
+        </tr>
+      </tbody></table>
+    </div>";
+} else {
+  echo "<div class="facture_body">
+        <table>
+          <tbody><tr>
+            <th>DESIGNATION</th>
+            <th>QUANTITE</th>
+            <th>PRIX UNITAIRE HT</th>
+            <th>PRIX UNITAIRE TTC</th>
+            <th>MONTANT TTC</th>
+            <th>TVA</th>
+          </tr>
+        </tbody></table>
+      </div>";
+}
+
+
+// echo "<br><br><div style="margin-left: 670px; border: 2px #000 solid; width:200px; padding: 10px;">
+// 
+// 
+// 
+// 
+// 
+// <table><tbody><tr><td width="90px;">BRUT TTC &nbsp;</td><td style="width: 80px; text-align:right;">".$tab['totalttc']." €</td></tr><tr><td>NET HT &nbsp;</td><td style="text-align:right;">".$tab['totalht']." €</td></tr><tr><td>TOTAL TVA &nbsp;</td><td style="text-align:right;">".$tab['tva']." €</td></tr><tr><td>NET TTC &nbsp;</td><td style="text-align:right;">".$tab['totalttc']." €</td></tr></tbody></table>
+// </div>";
+
+
+
+echo "<div class="facture_total">
+  <div class="facture_total_left">
+    <p>* Cette facture est soumise aux conditions générales de CRUIS RENT</p>
+  </div>
+  <div class="facture_total_right">
+    <div class="facture_total_detail">
+      <div class="facture_total_detail_price">
+        <p>BRUT TTC</p>
+        <p>".$tab['totalttc']." €</p>
+      </div>
+      <div class="facture_total_detail_price">
+        <p>NET HT</p>
+        <p>".$tab['totalht']." €</p>
+      </div>
+      <div class="facture_total_detail_price">
+        <p>TOTAL TVA</p>
+        <p>".$tab['tva']." €</p>
+      </div>
+      <div class="facture_total_detail_price">
+        <p>NET TTC</p>
+        <p>".$tab['totalttc']." €</p>
+      </div>
+    </div>
+  </div>
+</div>";
+}
+
+
+
+
+?&gt;
+<div class="facture_modalites">
+  <p>ECHEANCE : <span>31/08/2017</span></p>
+  <p>REGLEMENT : <span>Virement</span></p>
+</div>
+
+
+<div class="facture_footer">
+  <div class="facture_footer_left">
+    <p>CRUIS RENT SASU au capital de 30.000 euros - SIRET : 81263416000020<br>
+    CODE APE : 77.11B Location de longue durée de voitures et de véhiculers automobiles légers<br>
+    TVA INTRACOMMUNAUTAIRE : FR37 812634160<br>
+    IBAN CIC PONTOISE : FR7630066104610002035830179 - Swift : CMCIFRPP</p>
+  </div>
+  <div class="facture_footer_right">
+    <img src="ftp://193.25.197.153/img/Logo_CRUISR.png" alt="">
+    <p>GROUPE CRUIS'R SAS au capital de 552 000€</p>
+  </div>
+</div>
+<!-- <br><br>
+CRUIS RENT SASU au capital de 30.000 euros - SIRET : 81263416000020<br>
+CODE APE : 77.11B Location de longue durée de voitures et de véhiculers automobiles légers<br>
+TVA INTRACOMMUNAUTAIRE : FR37 812634160<br>
+IBAN CIC PONTOISE : FR7630066104610002035830179 - Swift : CMCIFRPP<br> -->
+
+
+
+</body></html>

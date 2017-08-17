@@ -37,7 +37,32 @@ app.use(cors(corsOptions));
 
 
 app.get('/contrats', function (req, res) {
-  queryDB(res,'select * from contrats');
+  queryDB(res,'SELECT `contrats`.*, `clients`.`societe`,`clients`.`adresse` FROM `contrats`,`clients` WHERE `contrats`.`id_client`=`clients`.`id_client`');
+})
+//add new contrats
+app.post('/contrats',jsonParser, function (req, res) {
+  let data = req.body;
+  let timeString = new Date().toJSON().split('T')[0];
+  let statut = 1;
+  console.log("data",data);
+  let queryString = 'INSERT INTO `contrats` (`id_contrat`, `id_type_contrat`, `id_client`, `adresse_facturation`, `niveau_service`, `datedebut`, `duree`, `actif`, `tarifassurance`, `mensualite_ht`, `date_ajout`) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
+  let inserts = [null,data['id_type_contrat'],data['id_client'],data['adresse_facturation'],data['niveau_service'],data['datedebut'],data['duree'],1,data['tarifassurance'],data['mensualite_ht'],timeString];
+  queryString = mysqlFunction.format(queryString, inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+//update contrat
+app.put('/contrats',jsonParser, function (req, res) {
+  let data = req.body;
+  console.log("data",data);
+  let queryString = 'UPDATE `contrats` SET `id_type_contrat` = ?, `id_client` = ?, `adresse_facturation` = ?, `niveau_service` = ?, `datedebut` = ?, `duree` = ?, `tarifassurance` = ?, `mensualite_ht` = ? WHERE `contrats`.`id_contrat` =?;'
+  let inserts = [data['id_type_contrat'],data['id_client'],data['adresse_facturation'],data['niveau_service'],data['datedebut'],data['duree'],data['tarifassurance'],data['mensualite_ht'],data['id_contrat']];
+  queryString = mysqlFunction.format(queryString, inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.get('/types_contrats', function (req, res) {
+  queryDB(res,'select * from types_contrats');
 })
 //data base : users
 //get user data
@@ -332,8 +357,8 @@ app.put('/boitiers/scooter', jsonParser, function (req, res) {
 })
 //Facturations
 app.get('/facturations', function (req, res) {
-  console.log("facturations",req.query);
-  if(req.query){
+  console.log("factures",req.query);
+  if(Object.getOwnPropertyNames(req.query).length>0){
     let queryString = 'SELECT * FROM `factures`, `clients` WHERE `factures`.`id_client`=`clients`.`id_client` AND `factures`.`id_facture`= ?';
     let inserts = [req.query['id']];
     queryString = mysqlFunction.format(queryString,inserts);
@@ -343,6 +368,15 @@ app.get('/facturations', function (req, res) {
     queryDB(res,'SELECT * FROM `factures`, `clients` WHERE `factures`.`id_client`=`clients`.`id_client`');
   }
 })
+app.post('/facturations', jsonParser, function (req, res) {
+  let data = req.body;
+  let queryString = 'CALL `facturation`(?,?,?,?);';
+  let inserts = [data["num_facture"], data["id_client"],data["designation"], data["date_facture"]];
+  queryString = mysqlFunction.format(queryString,inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+
 //test
 app.get('/contrats/name=:name&&id=:id', function (req, res) {
   console.log("get contrats by name",req.params);

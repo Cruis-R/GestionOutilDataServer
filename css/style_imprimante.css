@@ -1,0 +1,224 @@
+@font-face {
+  font-family: 'principalFont';
+  src: url("../fonts/69127621.ttf");
+}
+@font-face {
+  font-family: 'titleFactureFont';
+  src: url("../fonts/19380610.ttf");
+}
+@font-face {
+  font-family: 'boldFont';
+  src: url("../fonts/54546894.ttf");
+}
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+	font-size: 13px;
+	font-family: principalFont;
+}
+.facture_header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+.header_facture_left img {
+	width: 120px;
+	height: 120px;
+	margin-top: 0px;
+	margin-bottom: 15px;
+}
+.header_facture_left {
+  align-items: flex-start;
+}
+.header_facture_left p {
+  margin: 0px;
+  font-style: italic;
+}
+.header_facture_left p:nth-child(5) {
+  margin-top: 15px;
+}
+
+.header_facture_right h2 {
+  font-family: titleFactureFont;
+  font-size: 45px;
+  letter-spacing: 6px;
+  margin-top: 0px;
+}
+.header_facture_right p {
+  margin: 0px;
+}
+.header_facture_right .header_facture_coord_client {
+  margin-top: 30px;
+  border: 3px solid black;
+  border-radius: 10px;
+  color: black;
+  padding: 30px 15px;
+}
+.header_facture_coord_client p {
+  color: black;
+  font-family: boldFont;
+  font-size: 15px;
+}
+
+
+.facture_donnees {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  margin-top: 30px;
+}
+.facture_donnees p {
+	border-right: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  width: 20%;
+	font-size: 11px;
+	line-height: 20px;
+  text-align: center;
+  font-style: italic;
+  padding: 10px 0px;
+}
+.facture_donnees p:first-child {
+  border-radius: 15px 0px 0px 15px;
+	border-left: 1px solid black;
+}
+.facture_donnees p:last-child {
+  border-radius: 0px 15px 15px 0px;
+}
+
+.facture_donnees span {
+  font-style: normal;
+  color: black;
+  font-family: boldFont;
+}
+.facture_body {
+  width: 100%;
+  margin-top: 10px;
+}
+.facture_body th:first-child {
+  border-radius: 10px 0px 0px 10px;
+	border-left: 1px solid black;
+}
+.facture_body th:last-child {
+  border-radius: 0px 10px 10px 0px;
+}
+.facture_body th {
+	border-right: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  font-style: italic;
+  font-weight: normal;
+  padding: 7px;
+	font-size: 11px;
+}
+.facture_body table {
+  border-spacing: 0px;
+  font-family:
+}
+.facture_body td {
+  width: 10%;
+  text-align: right;
+  padding-right: 10px;
+  padding-top: 10px;
+  color: black;
+  font-family: boldFont;
+}
+.facture_body td:first-child {
+  width: 30%;
+  text-align: left;
+  padding-left: 10px;
+}
+
+
+
+.facture_total {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-top: 180px;
+}
+.facture_total_left {
+  width: 55%;
+}
+.facture_total_left p {
+  margin-bottom: 0px;
+	font-size: 11px;
+}
+.facture_total_right {
+  width: 45%;
+}
+.facture_total_detail {
+  border: 3px solid black;
+  border-radius: 10px;
+  padding: 10px 15px;
+}
+
+.facture_total_detail_price {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  line-height: 25px;
+}
+.facture_total_detail_price p {
+  margin: 0px;
+}
+.facture_total_detail_price p:last-child {
+  font-family: boldFont;
+  color: black;
+}
+
+
+.facture_modalites {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.facture_modalites p {
+	border-right: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  width: 50%;
+  text-align: left;
+  padding: 10px 15px;
+}
+.facture_modalites p span {
+  color: black;
+  font-family: boldFont;
+}
+.facture_modalites p:first-child {
+  border-radius: 15px 0px 0px 15px;
+	border-left: 1px solid black;
+}
+.facture_modalites p:last-child {
+  border-radius: 0px 15px 15px 0px;
+}
+
+
+.facture_footer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+.facture_footer_left p {
+  font-size: 11px;
+}
+.facture_footer_right  {
+  text-align: center;
+}
+.facture_footer_right img {
+  width: 150px;
+  height: auto;
+}
+.facture_footer_right p {
+  font-size: 7px;
+  font-family: boldFont;
+  margin: 0px;
+}
