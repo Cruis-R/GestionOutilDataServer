@@ -136,8 +136,28 @@ app.post('/profils', jsonParser, function(req,res){
   console.log("queryString",queryString);
   queryDB(res,queryString);
 })
+//clients
 app.get('/clients', function (req, res) {
   queryDB(res,'SELECT * FROM `clients`');
+})
+//add new clients
+app.post('/clients', jsonParser, function(req,res){
+  let data = req.body;
+  console.log("data",data);
+  let queryString = 'CALL `new_client`(?,?,?,?,?,?,?,?,?);';
+  let inserts = [data["societe"],data["siret"],data["referent"],data["adresse"],data["cp"],data["ville"],data["email"],data["telfixe"],data["portable"]];
+  queryString = mysqlFunction.format(queryString,inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/clients', jsonParser, function(req,res){
+  let data = req.body;
+  console.log("data",data);
+  let queryString = 'CALL `update_client`(?,?,?,?,?,?,?,?,?,?);';
+  let inserts = [data["societe"],data["siret"],data["referent"],data["adresse"],data["cp"],data["ville"],data["email"],data["telfixe"],data["portable"],data['id_client']];
+  queryString = mysqlFunction.format(queryString,inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
 })
 //batteries
 app.get('/batteries', function (req, res) {
@@ -368,10 +388,22 @@ app.get('/facturations', function (req, res) {
     queryDB(res,'SELECT * FROM `factures`, `clients` WHERE `factures`.`id_client`=`clients`.`id_client`');
   }
 })
+app.get('/facturations/num_facture', function (req, res) {
+  console.log("factures num_facture");
+  queryDB(res,'CALL `num_facture`(@p0); SELECT @p0 AS `num_facture`;');
+})
 app.post('/facturations', jsonParser, function (req, res) {
   let data = req.body;
-  let queryString = 'CALL `facturation`(?,?,?,?);';
+  let queryString = 'CALL `new_facturation`(?,?,?,?);';
   let inserts = [data["num_facture"], data["id_client"],data["designation"], data["date_facture"]];
+  queryString = mysqlFunction.format(queryString,inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/facturations', jsonParser, function (req, res) {
+  let data = req.body;
+  let queryString = 'CALL `update_facturation`(?,?,?,?,?,?);'
+  let inserts = [data["num_facture"], data["designation"],data["totalht"], data["tva"],data["date_facture"], data["id_facture"]];
   queryString = mysqlFunction.format(queryString,inserts);
   console.log("queryString",queryString);
   queryDB(res,queryString);
