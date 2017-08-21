@@ -64,6 +64,10 @@ app.put('/contrats',jsonParser, function (req, res) {
 app.get('/types_contrats', function (req, res) {
   queryDB(res,'select * from types_contrats');
 })
+//get contrats to associer
+app.get('/contrats/associer', function (req, res) {
+  queryDB(res,"SELECT `contrats`.`id_contrat`, `clients`.`societe` FROM `contrats`, `clients` WHERE `contrats`.`id_client` = `clients`.`id_client`;");
+})
 //data base : users
 //get user data
 app.get('/utilisateurs', function (req, res) {
@@ -179,12 +183,12 @@ app.put('/batteries', jsonParser, function (req, res) {
   console.log("queryString",queryString);
   queryDB(res,queryString);
 })
-app.put('/batteries/client', jsonParser, function (req, res) {
+app.put('/batteries/contrat', jsonParser, function (req, res) {
   let data = req.body;
   console.log("data",data);
-  let client = data['clientModalType']===1?data['id_client']:null;
-  let queryString = 'UPDATE `batteries` SET `id_client` = ? WHERE `batteries`.`id_batterie` = ?';
-  let inserts = [client,data["id_batterie"]];
+  let contrat = data['contratModalType']===1?data['id_contrat']:null;
+  let queryString = 'UPDATE `batteries` SET `id_contrat` = ? WHERE `batteries`.`id_batterie` = ?';
+  let inserts = [contrat,data["id_batterie"]];
   queryString = mysqlFunction.format(queryString, inserts);
   console.log("queryString",queryString);
   queryDB(res,queryString);
@@ -220,12 +224,12 @@ app.put('/chargeurs', jsonParser, function (req, res) {
   console.log("queryString",queryString);
   queryDB(res,queryString);
 })
-app.put('/chargeurs/client', jsonParser, function (req, res) {
+app.put('/chargeurs/contrat', jsonParser, function (req, res) {
   let data = req.body;
   console.log("data",data);
-  let client = data['clientModalType']===1?data['id_client']:null;
-  let queryString = 'UPDATE `chargeurs` SET `id_client` = ? WHERE `chargeurs`.`id_chargeur` = ?';
-  let inserts = [client,data["id_chargeur"]];
+  let contrat = data['contratModalType']===1?data['id_contrat']:null;
+  let queryString = 'UPDATE `chargeurs` SET `id_contrat` = ? WHERE `chargeurs`.`id_chargeur` = ?';
+  let inserts = [contrat,data["id_chargeur"]];
   queryString = mysqlFunction.format(queryString, inserts);
   console.log("queryString",queryString);
   queryDB(res,queryString);
@@ -257,6 +261,9 @@ app.post('/scooters',jsonParser, function (req, res) {
   queryString = mysqlFunction.format(queryString,inserts);
   console.log("queryString",queryString);
   queryDB(res,queryString);
+})
+app.get('/scooters/associer', function (req, res) {
+  queryDB(res,"SELECT `id_scooter` FROM `scooters` WHERE `id_contrat` IS NULL OR `id_scooter` = ''");
 })
 app.put('/scooters',jsonParser, function (req, res) {
   let data = req.body;
@@ -333,7 +340,7 @@ app.get('/boitiers', function (req, res) {
   queryDB(res,'SELECT * FROM `boitiers`');
 })
 app.get('/boitiers/associer', function (req, res) {
-  queryDB(res,"SELECT `id_boitier` FROM `boitiers` WHERE `id_scooter` IS NULL OR `id_scooter` = ''");
+  queryDB(res,"SELECT `id_boitier`,`imei` FROM `boitiers` WHERE `id_scooter` IS NULL OR `id_scooter` = ''");
 })
 //add new boitier
 app.post('/boitiers', jsonParser, function (req, res) {

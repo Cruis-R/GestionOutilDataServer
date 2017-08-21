@@ -4,8 +4,8 @@
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="ftp://193.25.197.153/css/style2.css" rel="stylesheet" type="text/css" media="screen">
-  <link href="ftp://193.25.197.153/css/style_imprimante.css" rel="stylesheet" type="text/css" media="print">
+  <link href="ftp://193.25.197.153/css/style2.css" type="text/css" rel="stylesheet" media="screen">
+  <link href="ftp://193.25.197.153/css/style_imprimante.css" type="text/css" rel="stylesheet" media="print">
   </head>
   <body>
 <!--?php
@@ -31,7 +31,7 @@ while ($tab=mysql_fetch_array($result)) {
       $reqcli="SELECT * FROM clients WHERE id_client=".$tab['id_client'];
       $rescli = mysql_query ($reqcli,$connexion);
        while ($cli=mysql_fetch_array($rescli)) {
-        $nomcli=$cli['societe']."<br-->".$cli['adresse']."<br>".$cli['cp']." ".$cli['ville'].")";
+        $nomcli=$cli['societe']."<br-->".$cli['adresse']."<br>".$cli['cp']." ".$cli['ville']."";
        }
 
       $datefact=substr($tab['date_facture'],8,2)."/".substr($tab['date_facture'],5,2)."/".substr($tab['date_facture'],0,4);
@@ -52,7 +52,7 @@ while ($tab=mysql_fetch_array($result)) {
                 <div class="facture_suivi_par">
                   <p>AFFAIRE SUIVIE PAR : Célia Thurel</p>
                   <p>Email : celia.thurel@cruisrent.com</p>
-                  <p>Téléphone : 09 54 55 4000</p>
+                  <p>Téléphone : 09 54 55 40000</p>
                 </div>
                 <div class="header_facture_coord_client">
                   <p>".$nomcli."</p>
@@ -100,13 +100,122 @@ echo "<div class="facture_body">
           <td>".$tab['totalht']." €</td>
           <td>".$tab['totalttc']." €</td>
           <td>".$tab['totalttc']." €</td>
-          <td>".$tab['tva']."</td>
+          <td>".$tab['tva']." €</td>
         </tr>
       </tbody></table>
     </div>";
 } else {
-  echo "<div class="facture_body">
-        <table>
+  
+    echo "<div class="facture_body">
+        ";
+$requ="SELECT c.nbkms, c.id_contrat, scoot.num_cruisrent, scoot.marque, scoot.modele, scoot.immat FROM contrats as c, scooters as scoot, factures as f WHERE c.id_scooter=scoot.id_scooter AND c.id_contrat=f.id_contrat AND f.id_facture=".$_GET['id'];
+//echo $requ;
+$result = mysql_query ($requ,$connexion);
+while ($tab=mysql_fetch_array($result)) {  
+  $idcontrat=$tab['id_contrat'];
+  if($tab['nbkms']='12000'){$tarifht='89.00';}else{$tarifht='109.00';}
+      echo "";
+$total=$tarifht;
+}
+// assurance
+$requa="SELECT c.tarifassurance FROM contrats as c WHERE c.id_contrat =".$idcontrat;
+$resulta = mysql_query ($requa,$connexion);
+while ($taba=mysql_fetch_array($resulta)) {  
+      echo "";
+$tarifassurance=$taba['tarifassurance'];
+}
+
+// batterie1
+$requb1="SELECT num_cruisrent, puissance, tarif FROM sscontrats as sc, batteries as b WHERE sc.batterie1=b.id_batterie AND sc.id_contrat =".$idcontrat;
+$resultb1 = mysql_query ($requb1,$connexion);
+while ($tabb1=mysql_fetch_array($resultb1)) {  
+       echo "";
+$total=$total+$tabb1['tarif'];
+}  
+// batterie2 
+$requb2="SELECT num_cruisrent, puissance, tarif FROM sscontrats as sc, batteries as b WHERE sc.batterie2=b.id_batterie AND sc.id_contrat =".$idcontrat;
+$resultb2 = mysql_query ($requb2,$connexion);
+while ($tabb2=mysql_fetch_array($resultb2)) {  
+       echo "";
+$total=$total+$tabb2['tarif'];
+}  
+// batterie3
+$requb3="SELECT num_cruisrent, puissance, tarif FROM sscontrats as sc, batteries as b WHERE sc.batterie3=b.id_batterie AND sc.id_contrat =".$idcontrat;
+$resultb3 = mysql_query ($requb3,$connexion);
+while ($tabb3=mysql_fetch_array($resultb3)) {  
+       echo "";
+$total=$total+$tabb3['tarif'];
+}  
+// chareur1
+$requc1="SELECT num_cruisrent, tarif FROM sscontrats as sc, chargeurs as b WHERE sc.chargeur1=b.id_chargeur AND sc.id_contrat =".$idcontrat;
+$resultc1 = mysql_query ($requc1,$connexion);
+while ($tabc1=mysql_fetch_array($resultc1)) {  
+       echo "";
+$total=$total+$tabc1['tarif'];
+}  
+// chareur2
+$requc2="SELECT num_cruisrent, tarif FROM sscontrats as sc, chargeurs as b WHERE sc.chargeur2=b.id_chargeur AND sc.id_contrat =".$idcontrat;
+$resultc2 = mysql_query ($requc2,$connexion);
+while ($tabc2=mysql_fetch_array($resultc2)) {  
+       echo "";
+$total=$total+$tabc2['tarif'];
+}  
+// chareur3
+$requc3="SELECT num_cruisrent, tarif FROM sscontrats as sc, chargeurs as b WHERE sc.chargeur3=b.id_chargeur AND sc.id_contrat =".$idcontrat;
+$resultc3 = mysql_query ($requc3,$connexion);
+while ($tabc3=mysql_fetch_array($resultc3)) {  
+       echo "";
+$total=$total+$tabc3['tarif'];
+}  
+
+// vérifier si c'est la 1ere facture sur ce crontrat si oui ajouter les tarifs des accessoires
+$reqtotal = "SELECT count(*) as nb FROM factures WHERE id_contrat =".$idcontrat;
+$restotal = mysql_query ($reqtotal,$connexion);
+while ($tabtot=mysql_fetch_array($restotal)) {  
+ $nbfact=$tabtot['nb'];
+}
+if($nbfact=='1') {
+
+// accessoire1
+$requa1="SELECT num_cruisrent, tarif, libelle FROM accessoires as a, contrats as c WHERE c.accessoire1=a.id_accessoire AND c.id_contrat =".$idcontrat;
+$resulta1 = mysql_query ($requa1,$connexion);
+while ($taba1=mysql_fetch_array($resulta1)) {  
+       echo "";
+$total=$total+$taba1['tarif'];
+}  
+// accessoire2
+$requa2="SELECT num_cruisrent, tarif, libelle FROM accessoires as a, contrats as c WHERE c.accessoire2=a.id_accessoire AND c.id_contrat =".$idcontrat;
+$resulta2 = mysql_query ($requa2,$connexion);
+while ($taba2=mysql_fetch_array($resulta2)) {  
+       echo "";
+$total=$total+$taba2['tarif'];
+} 
+// accessoire3
+$requa3="SELECT num_cruisrent, tarif, libelle FROM accessoires as a, contrats as c WHERE c.accessoire3=a.id_accessoire AND c.id_contrat =".$idcontrat;
+$resulta3 = mysql_query ($requa3,$connexion);
+while ($taba3=mysql_fetch_array($resulta3)) {  
+       echo "";
+$total=$total+$taba3['tarif'];
+} 
+// accessoire4
+$requa4="SELECT num_cruisrent, tarif, libelle FROM accessoires as a, contrats as c WHERE c.accessoire4=a.id_accessoire AND c.id_contrat =".$idcontrat;
+$resulta4 = mysql_query ($requa4,$connexion);
+while ($taba4=mysql_fetch_array($resulta4)) {  
+       echo "";
+$total=$total+$taba4['tarif'];
+} 
+// accessoire5
+$requa5="SELECT num_cruisrent, tarif, libelle FROM accessoires as a, contrats as c WHERE c.accessoire5=a.id_accessoire AND c.id_contrat =".$idcontrat;
+$resulta5 = mysql_query ($requa5,$connexion);
+while ($taba5=mysql_fetch_array($resulta5)) {  
+       echo "";
+$total=$total+$taba5['tarif'];
+} 
+
+
+}
+
+echo "<table>
           <tbody><tr>
             <th>DESIGNATION</th>
             <th>QUANTITE</th>
@@ -114,12 +223,101 @@ echo "<div class="facture_body">
             <th>PRIX UNITAIRE TTC</th>
             <th>MONTANT TTC</th>
             <th>TVA</th>
-          </tr>
-        </tbody></table>
+          </tr><tr>
+          <td>".$tab['marque']." ".$tab['modele']." - Immat : ".$tab['immat']."<br>Forfait annuel : ".$tab['nbkms']." kms</td>
+          <td>1</td>
+          <td>".$tarifht." €</td>
+          <td>".number_format($tarifht*1.2,2)." €</td>
+          <td>".number_format($tarifht*1.2,2)." €</td>
+          <td>".number_format($tarifht*0.2,2)." €</td>
+        </tr><tr>
+          <td>Assurance </td>
+          <td>1</td>
+          <td>".number_format($taba['tarifassurance'],2)." €</td>
+          <td>".number_format($taba['tarifassurance'],2)." €</td>
+          <td>".number_format($taba['tarifassurance'],2)." €</td>
+          <td>".number_format($taba['tarifassurance']*0.2,2)." €</td>
+        </tr><tr>
+          <td>Batterie N° ".$tabb1['num_cruisrent']." - Puissance ".$tabb1['puissance']."</td>
+          <td>1</td>
+          <td>".number_format($tabb1['tarif'],2)." €</td>
+          <td>".number_format($tabb1['tarif']*1.2,2)." €</td>
+          <td>".number_format($tabb1['tarif']*1.2,2)." €</td>
+          <td>".number_format($tabb1['tarif']*0.2,2)." €</td>
+        </tr><tr>
+          <td>Batterie N° ".$tabb2['num_cruisrent']." - Puissance ".$tabb2['puissance']."</td>
+          <td>1</td>
+          <td>".number_format($tabb2['tarif'],2)." €</td>
+          <td>".number_format($tabb2['tarif']*1.2,2)." €</td>
+          <td>".number_format($tabb2['tarif']*1.2,2)." €</td>
+          <td>0 €</td>
+        </tr><tr>
+          <td>Batterie N° ".$tabb3['num_cruisrent']." - Puissance ".$tabb3['puissance']."</td>
+          <td>1</td>
+          <td>".number_format($tabb3['tarif'],2)." €</td>
+          <td>".number_format($tabb3['tarif']*1.2,2)." €</td>
+          <td>".number_format($tabb3['tarif']*1.2,2)." €</td>
+          <td>".number_format($tabb3['tarif']*0.2,2)." €</td>
+        </tr><tr>
+          <td>Chargeur ".$tabc1['num_cruisrent']."</td>
+          <td>1</td>
+          <td>".number_format($tabc1['tarif'],2)." €</td>
+          <td>".number_format($tabc1['tarif']*1.2,2)." €</td>
+          <td>".number_format($tabc1['tarif']*1.2,2)." €</td>
+          <td>".number_format($tabc1['tarif']*0.2,2)." €</td>
+        </tr><tr>
+          <td>Chargeur ".$tabc2['num_cruisrent']."</td>
+          <td>1</td>
+          <td>".number_format($tabc2['tarif'],2)." €</td>
+          <td>".number_format($tabc2['tarif']*1.2,2)." €</td>
+          <td>".number_format($tabc2['tarif']*1.2,2)." €</td>
+          <td>".number_format($tabc2['tarif']*0.2,2)." €</td>
+        </tr><tr>
+          <td>Chargeur ".$tabc3['num_cruisrent']."</td>
+          <td>1</td>
+          <td>".number_format($tabc3['tarif'],2)." €</td>
+          <td>".number_format($tabc3['tarif']*1.2,2)." €</td>
+          <td>".number_format($tabc3['tarif']*1.2,2)." €</td>
+          <td>".number_format($tabc3['tarif']*0.2,2)." €</td>
+        </tr><tr>
+          <td>".$taba1['libelle']." (Ref : ".$taba1['num_cruisrent'].")</td>
+          <td>1</td>
+          <td>".number_format($taba1['tarif'],2)." €</td>
+          <td>".number_format($taba1['tarif']*1.2,2)." €</td>
+          <td>".number_format($taba1['tarif']*1.2,2)." €</td>
+          <td>".number_format($taba1['tarif']*0.2,2)." €</td>
+        </tr><tr>
+          <td>".$taba2['libelle']." (Ref : ".$taba2['num_cruisrent'].")</td>
+          <td>1</td>
+          <td>".number_format($taba2['tarif'],2)." €</td>
+          <td>".number_format($taba2['tarif']*1.2,2)." €</td>
+          <td>".number_format($taba2['tarif']*1.2,2)." €</td>
+          <td>".number_format($taba2['tarif']*0.2,2)." €</td>
+        </tr><tr>
+          <td>".$taba3['libelle']." (Ref : ".$taba3['num_cruisrent'].")</td>
+          <td>1</td>
+          <td>".number_format($taba3['tarif'],2)." €</td>
+          <td>".number_format($taba3['tarif']*1.2,2)." €</td>
+          <td>".number_format($taba3['tarif']*1.2,2)." €</td>
+          <td>".number_format($taba3['tarif']*0.2,2)." €</td>
+        </tr><tr>
+          <td>".$taba4['libelle']." (Ref : ".$taba4['num_cruisrent'].")</td>
+          <td>1</td>
+          <td>".number_format($taba4['tarif'],2)." €</td>
+          <td>".number_format($taba4['tarif']*1.2,2)." €</td>
+          <td>".number_format($taba4['tarif']*1.2,2)." €</td>
+          <td>".number_format($taba4['tarif']*0.2,2)." €</td>
+        </tr><tr>
+          <td>".$taba5['libelle']." (Ref : ".$taba5['num_cruisrent'].")</td>
+          <td>1</td>
+          <td>".number_format($taba5['tarif'],2)." €</td>
+          <td>".number_format($taba5['tarif']*1.2,2)." €</td>
+          <td>".number_format($taba5['tarif']*1.2,2)." €</td>
+          <td>".number_format($taba5['tarif']*0.2,2)." €</td>
+        </tr></tbody></table>
       </div>";
+      
 }
-
-
 // echo "<br><br><div style="margin-left: 670px; border: 2px #000 solid; width:200px; padding: 10px;">
 // 
 // 
@@ -130,7 +328,7 @@ echo "<div class="facture_body">
 // </div>";
 
 
-
+if($tab['id_contrat']=='0'){
 echo "<div class="facture_total">
   <div class="facture_total_left">
     <p>* Cette facture est soumise aux conditions générales de CRUIS RENT</p>
@@ -156,6 +354,37 @@ echo "<div class="facture_total">
     </div>
   </div>
 </div>";
+} else { 
+echo "<div class="facture_total">
+  <div class="facture_total_left">
+    <p>* Cette facture est soumise aux conditions générales de CRUIS RENT</p>
+  </div>
+  <div class="facture_total_right">
+    <div class="facture_total_detail">
+      <div class="facture_total_detail_price">
+        <p>BRUT TTC</p>
+        <p>".number_format(($total*1.2)+$tarifassurance,2)." €</p>
+      </div>
+      <div class="facture_total_detail_price">
+        <p>NET HT</p>
+        <p>".number_format($total+$tarifassurance,2)." €</p>
+      </div>
+      <div class="facture_total_detail_price">
+        <p>TOTAL TVA</p>
+        <p>".number_format($total*0.2,2)." €</p>
+      </div>
+      <div class="facture_total_detail_price">
+        <p>NET TTC</p>
+        <p>".number_format(($total*1.2)+$tarifassurance,2)." €</p>
+      </div>
+    </div>
+  </div>
+</div>";
+}
+
+
+
+
 }
 
 
@@ -164,7 +393,7 @@ echo "<div class="facture_total">
 ?&gt;
 <div class="facture_modalites">
   <p>ECHEANCE : <span>31/08/2017</span></p>
-  <p>REGLEMENT : <span>Virement</span></p>
+  <p>REGLEMENT : <span>Chèque</span></p>
 </div>
 
 
