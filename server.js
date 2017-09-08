@@ -415,7 +415,50 @@ app.put('/facturations', jsonParser, function (req, res) {
   console.log("queryString",queryString);
   queryDB(res,queryString);
 })
-
+//alerte
+app.get('/alertes', function (req, res) {
+  queryDB(res,'SELECT * FROM `alertes`,`types_alertes` WHERE `alertes`.`id_type_alerte` = `types_alertes`.`id_type_alerte`');
+})
+app.post('/alertes',jsonParser , function (req, res) {
+  let data = req.body;
+  console.log("data",data);
+  let queryString = 'INSERT INTO `alertes` (`id_type_alerte`, `id_group`) VALUES (?,?);'
+  let inserts = [data['id_type_alerte'],data['id_group']];
+  queryString = mysqlFunction.format(queryString, inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/alertes',jsonParser , function (req, res) {
+  let data = req.body;
+  console.log("data",data);
+  let queryString = 'UPDATE `alertes` SET `id_type_alerte` = ?, `id_group` = ? WHERE `alertes`.`id_alerte` =?;'
+  let inserts = [data['id_type_alerte'],data['id_group'],data['id_alerte']];
+  queryString = mysqlFunction.format(queryString, inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+//type_alerte
+app.get('/types_alertes', function (req, res) {
+  queryDB(res,'SELECT * FROM `types_alertes`');
+})
+app.post('/types_alertes',jsonParser, function (req, res) {
+  let data = req.body;
+  console.log("data",data);
+  let queryString = 'INSERT INTO `types_alertes` (`nom`, `parameter1`, `parameter2`) VALUES (?,?,?);'
+  let inserts = [data['nom'],data['parameter1'],data['parameter2']];
+  queryString = mysqlFunction.format(queryString, inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
+app.put('/types_alertes',jsonParser, function (req, res) {
+  let data = req.body;
+  console.log("data",data);
+  let queryString = 'UPDATE `types_alertes` SET `nom` = ?, `parameter1` = ?, `parameter2` = ? WHERE `types_alertes`.`id_type_alerte` =?;'
+  let inserts = [data['nom'],data['parameter1'],data['parameter2'],data['id_type_alerte']];
+  queryString = mysqlFunction.format(queryString, inserts);
+  console.log("queryString",queryString);
+  queryDB(res,queryString);
+})
 //test
 app.get('/contrats/name=:name&&id=:id', function (req, res) {
   console.log("get contrats by name",req.params);
