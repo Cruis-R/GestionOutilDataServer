@@ -73,6 +73,15 @@ app.get('/contrats/associer', function (req, res) {
 app.get('/utilisateurs', function (req, res) {
   queryDB(res,'SELECT * FROM `users`');
 })
+//get user profil
+app.get('/utilisateurs/email=:email', function (req, res) {
+  console.log("get user profil by email",req.params);
+  let queryString = 'SELECT `profil` FROM `users` WHERE `email`= ?';
+  let inserts = [req.params["email"]];
+  queryString = mysqlFunction.format(queryString, inserts);
+  queryDB(res,queryString);
+  //res.end();
+})
 //delete user data
 app.delete('/utilisateurs', jsonParser, function(req,res){
   let data = req.body;
@@ -464,7 +473,7 @@ app.get('/contrats/name=:name&&id=:id', function (req, res) {
   console.log("get contrats by name",req.params);
   res.end();
 })
-var server = app.listen(8081, function () {
+var server = app.listen(process.env.PORT||8081, function () {
 
   var host = server.address().address
   var port = server.address().port
